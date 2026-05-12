@@ -1,4 +1,3 @@
-# .github/workflows/ci.yml
 name: CI
 
 on: [push, pull_request]
@@ -6,15 +5,14 @@ on: [push, pull_request]
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      EXECFORGE_API_TOKEN: ${{ secrets.EXECFORGE_API_TOKEN }}
-      # Only needed if you're testing against localhost (not prod):
-      # EXECFORGE_API_URL: https://your-ngrok-url
     steps:
       - uses: actions/checkout@v4
-      - uses: execforge/runtime@v1
+
+      - uses: actions/setup-node@v4
         with:
-          mode: run
-          command: |
-            npm ci
-            npm test
+          node-version: '20'
+
+      - name: Run with ExecForge telemetry
+        env:
+          EXECFORGE_API_TOKEN: ${{ secrets.EXECFORGE_API_TOKEN }}
+        run: npx --yes @execforge/runtime run -- "npm ci && npm test"
