@@ -14,5 +14,6 @@ jobs:
 
       - name: Build & test
         env:
-          EXECFORGE_API_TOKEN: ${{ secrets.EXECFORGE_API_TOKEN }}
+           EXECFORGE_API_URL: ${{ secrets.EXECFORGE_API_URL }}
+           EXECFORGE_API_TOKEN: ${{ secrets.EXECFORGE_API_TOKEN }}
         run: npx @execforge/runtime run -- "npm ci && npm test"
