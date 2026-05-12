@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "2026-05-11",
+  "collectorVersion": "0.1.0",
+  "repositoryFullName": "local/repository",
+  "runId": "local-1778575623878",
+  "runAttempt": 1,
+  "telemetry": {
+    "source": "execforge-wrapper",
+    "wrapperVersion": "0.1.0",
+    "captureStartedAt": "2026-05-12T08:47:03.868Z",
+    "machine": {
+      "os": "linux",
+      "arch": "x64",
+      "cpuCount": 12,
+      "totalMemoryMb": 15651
+    },
+    "samples": [
+      {
+        "atMs": 1778575623869,
+        "cpuPct": 54.69,
+        "memoryRssMb": 51
+      },
+      {
+        "atMs": 1778575623875,
+        "cpuPct": 54.69,
+        "memoryRssMb": 51
+      },
+      {
+        "atMs": 1778575623878,
+        "cpuPct": 54.69,
+        "memoryRssMb": 52
+      }
+    ],
+    "captureFinishedAt": "2026-05-12T08:47:03.878Z",
+    "exitCode": 0,
+    "artifacts": [],
+    "annotations": []
+  }
+}
