@@ -1,19 +1,31 @@
-name: CI
+name: ci
 
-on: [push, pull_request]
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+env:
+  TURBO_TELEMETRY_DISABLED: "1"
 
 jobs:
-  build:
+  verify:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
-
-      - name: Build & test
-        env:
-           EXECFORGE_API_URL: ${{ secrets.EXECFORGE_API_URL }}
-           EXECFORGE_API_TOKEN: ${{ secrets.EXECFORGE_API_TOKEN }}
-        run: npx @execforge/runtime run -- "npm ci && npm test"
+          node-version: 22
+          cache: npm
+      - uses: actions/cache@v4
+        with:
+          path: |
+            .turbo/cache
+            node_modules/.cache
+          key: ci-${{ runner.os }}-${{ hashFiles('package-lock.json', 'turbo.json') }}
+          restore-keys: |
+            ci-${{ runner.os }}-
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test -- --runInBand=false
