@@ -1,6 +1,6 @@
 name: ci
 
-on:
+on: 
   pull_request:
   push:
     branches: [main]
@@ -28,7 +28,6 @@ jobs:
           restore-keys: |
             ci-${{ runner.os }}-
       - run: npm ci
-      - run: npm install --save-dev jest-junit
       - run: npm run lint
       - run: npx jest --ci --reporters=default --reporters=jest-junit --outputFile=junit.xml --runInBand=false
       - name: Upload test results
