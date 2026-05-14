@@ -13,6 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
+      - uses: Absterrg0/execforge-runtime/start@v1
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
@@ -27,5 +28,15 @@ jobs:
           restore-keys: |
             ci-${{ runner.os }}-
       - run: npm ci
+      - run: npm install --save-dev jest-junit
       - run: npm run lint
-      - run: npm test -- --runInBand=false
+      - run: npx jest --ci --reporters=default --reporters=jest-junit --outputFile=junit.xml --runInBand=false
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: junit.xml
+          retention-days: 5
+      - uses: Absterrg0/execforge-runtime/finish@v1
+        if: always()
