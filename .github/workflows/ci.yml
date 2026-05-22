@@ -33,4 +33,4 @@ jobs:
           EXECFORGE_API_TOKEN: ${{ secrets.EXECFORGE_API_TOKEN }}
           EXECFORGE_API_URL: ${{ secrets.EXECFORGE_API_URL }}
           EXECFORGE_JOB_STATUS: ${{ job.status }}
-          EXECFORGE_JUNIT_PATH: junit-results.xml
+
