@@ -10,8 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - uses: Absterrg0/mini-project/sdk@main
+      - uses: Absterrg0/execforge-runtime@v1
         env:
           EXECFORGE_API_TOKEN: ${{ secrets.EXECFORGE_API_TOKEN }}
           EXECFORGE_API_URL: ${{ secrets.EXECFORGE_API_URL }}  # leave blank in prod, set to http://localhost:3000 for local
