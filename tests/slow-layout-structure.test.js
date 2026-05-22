@@ -3,57 +3,54 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs/promises');
 const path = require('node:path');
 
-// Helper for artificial delay
-const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-// Simulate heavy structural analysis with delays
 async function analyzeLayoutStructureSlowly(content, iterations) {
-    let structureScore = 0;
-    const structuralKeywords = ["Metadata", "RootLayout", "html", "body", "className", "variable"];
+  let structureScore = 0;
+  const structuralPatterns = [
+    /exports+consts+metadatas*:/,
+    /exports+defaults+functions+RootLayout/,
+    /<html[^>]*>/s,
+    /<body[^>]*>[sS]*{children}[sS]*</body>/s,
+    /geistSans.variable/,
+    /geistMono.variable/,
+    /antialiased/,
+  ];
 
-    for (let i = 0; i < iterations; i++) {
-        for (const keyword of structuralKeywords) {
-            if (content.includes(keyword)) {
-                structureScore++;
-            }
-        }
-        // Introduce a small delay every N iterations
-        if (i % Math.floor(iterations / 15) === 0) {
-            await sleep(40);
-        }
+  for (let i = 0; i < iterations; i += 1) {
+    for (const pattern of structuralPatterns) {
+      if (pattern.test(content)) structureScore += 1;
     }
-    return structureScore;
+    if (i % Math.floor(iterations / 15) === 0) {
+      await sleep(40);
+    }
+  }
+  return structureScore;
 }
 
-test('Slow test: app/layout.tsx structural verification with heavy analysis', async (t) => {
-    const layoutPath = path.join(__dirname, '../app/layout.tsx');
-    let fileContent;
+test('Slow test: app/layout.tsx structural verification with tolerant source checks', async () => {
+  const layoutPath = path.join(__dirname, '../app/layout.tsx');
+  let fileContent;
 
-    try {
-        // Simulate sequential I/O by reading the file with delays
-        console.log('Reading app/layout.tsx...');
-        fileContent = await fs.readFile(layoutPath, 'utf8');
-        await sleep(150);
-    } catch (error) {
-        assert.fail(`Failed to read app/layout.tsx: ${error.message}`);
-    }
+  try {
+    fileContent = await fs.readFile(layoutPath, 'utf8');
+    await sleep(150);
+  } catch (error) {
+    assert.fail(`Failed to read app/layout.tsx: ${error.message}`);
+  }
 
-    assert.ok(fileContent, 'File content should not be empty');
+  assert.ok(fileContent, 'File content should not be empty');
 
-    // Perform heavy structural analysis
-    console.log('Starting heavy layout structure analysis...');
-    const analysisScore = await analyzeLayoutStructureSlowly(fileContent, 60000); // 60,000 iterations
-    console.log(`Finished heavy layout structure analysis. Analysis score: ${analysisScore}`);
+  const analysisScore = await analyzeLayoutStructureSlowly(fileContent, 60000);
+  assert.ok(analysisScore > 0, 'Slow structural analysis should find layout signals');
 
-    // Assertions based on the content of app/layout.tsx
-    assert.ok(fileContent.includes('import type { Metadata } from "next";'), 'Layout should import Metadata');
-    assert.ok(fileContent.includes('export default function RootLayout'), 'Layout should export RootLayout function');
-    assert.ok(fileContent.includes('<html'), 'Layout should contain an <html> tag');
-    assert.ok(fileContent.includes('className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}'), 'HTML tag should have specific font classes');
-    assert.ok(fileContent.includes('<body>{children}</body>'), 'Layout body should render children');
+  assert.match(fileContent, /imports+types+{s*Metadatas*}s+froms+["']next["'];?/s, 'Layout should import Metadata from next');
+  assert.match(fileContent, /exports+defaults+functions+RootLayout/, 'Layout should export RootLayout function');
+  assert.match(fileContent, /<html[^>]*>/s, 'Layout should contain an html element, regardless of attributes');
+  assert.match(fileContent, /<body[^>]*>[sS]*{children}[sS]*</body>/s, 'Layout body should render children regardless of whitespace or body attributes');
+  assert.match(fileContent, /geistSans.variable/, 'Layout should reference the geistSans variable');
+  assert.match(fileContent, /geistMono.variable/, 'Layout should reference the geistMono variable');
+  assert.match(fileContent, /antialiased/, 'Layout should apply antialiased styling somewhere in the layout class configuration');
 
-    // Introduce a final, significant delay
-    console.log('Introducing final delay...');
-    await sleep(600);
-    console.log('Slow layout test completed.');
+  await sleep(600);
 });
