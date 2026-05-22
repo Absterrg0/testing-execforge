@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "echo \"No test specified\""
+    "test": "node --test"
   },
   "dependencies": {
     "next": "16.2.6",
