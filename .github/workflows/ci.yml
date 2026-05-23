@@ -25,6 +25,8 @@ jobs:
         run: npm ci
 
       - name: Build & test
+        env:
+          CI: true
         run: npm run build && npm test
 
       - uses: Absterrg0/execforge-runtime/finish@v1
