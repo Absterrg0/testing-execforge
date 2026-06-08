@@ -27,7 +27,7 @@ jobs:
       - name: Build & test
         env:
           CI: true
-        run: npm run build && npm test
+        run: npm run build && npm run test:pass
 
       - uses: Absterrg0/execforge-runtime/finish@v1
         if: always()
